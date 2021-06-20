@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Post;
 use Illuminate\Http\Request;
+use Illuminate\support\Str;
 
 class PostController extends Controller
 {
@@ -27,7 +28,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.posts.create');
     }
 
     /**
@@ -38,7 +39,29 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validazione
+        $request->validate([
+            'title' => 'required' | 'unique:posts' | 'max:5',
+            'content' => 'required',
+        ], [
+            'required' => 'The :attribute is required!',
+            'unique' => 'The :atttribute is already in use in another post',
+            'max' => 'Max :max 5 characters allowed for the :attribute',
+        ]);
+
+        $data = $request->all();
+        //gen slug
+        $data['slug'] = Str::slug($data['title'], '-');
+
+        //create and save
+        $new_post = new Post();
+
+        $new_post->fill($data);
+
+        $new_post->save();
+
+        return redirect()->route('admin.posts.show', $new_post->id);
+
     }
 
     /**
@@ -66,7 +89,12 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::find($id);
+
+        if (!$post) {
+            abort(404);
+        }
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -78,7 +106,19 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //validate
+        $data = $request->all();
+
+        $post = Post::find($id);
+
+        //gen slug
+        if ($data['title'] != $post->title) {
+            $data['slug'] = Str::slug($data['title'], '-');
+        }
+
+        $post->update($data); //fillable
+
+        return redirect()->route('admin.posts.show', $post->id);
     }
 
     /**
