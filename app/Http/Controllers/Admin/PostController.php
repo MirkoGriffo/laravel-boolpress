@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Post;
 use Illuminate\Http\Request;
 use Illuminate\support\Str;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
@@ -41,20 +42,18 @@ class PostController extends Controller
     {
         //validazione
         $request->validate([
-            'title' => 'required' | 'unique:posts' | 'max:5',
+            'title' => 'required|unique:posts|max:50',
             'content' => 'required',
-        ], [
-            'required' => 'The :attribute is required!',
-            'unique' => 'The :atttribute is already in use in another post',
-            'max' => 'Max :max 5 characters allowed for the :attribute',
+
         ]);
 
         $data = $request->all();
+
+        $new_post = new Post();
         //gen slug
         $data['slug'] = Str::slug($data['title'], '-');
 
         //create and save
-        $new_post = new Post();
 
         $new_post->fill($data);
 
@@ -106,6 +105,22 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+
+            'title' => [
+                'required',
+                Rule::unique('posts')->ignore($id),
+                'max=255',
+
+            ],
+
+            'content' => 'required',
+        ], [
+            'required' => 'The :attribute is required!',
+            'unique' => 'The :atttribute is already in use in another post',
+            'max' => 'Max :max 5 characters allowed for the :attribute',
+
+        ]);
         //validate
         $data = $request->all();
 
@@ -129,6 +144,9 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        $post->delete();
+
+        return redirect()->route('admin.posts.index')->with('deleted', $post->title);
     }
 }
