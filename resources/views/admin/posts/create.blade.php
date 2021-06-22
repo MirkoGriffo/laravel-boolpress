@@ -24,6 +24,18 @@
             <div class="feedback">{{ $message }}</div>
             @enderror
         </div>
+        <div class="mb-3">
+            <label for="category_id">Category</label>
+            <select name="category_id" id="category_id">
+                <option value="">-- Select category --</option>
+                @foreach ($categories as $item)
+                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                 @if ($item->id == old('category_id')) selected @endif>
+                    {{ $item->name }}
+                </option>
+                @endforeach
+            </select>
+        </div>
         <button class="btn btn-primary" type="submit">Create post</button>
     </form>
     </div>

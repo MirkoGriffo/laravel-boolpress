@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Category;
 use App\Http\Controllers\Controller;
 use App\Post;
 use Illuminate\Http\Request;
@@ -17,9 +18,9 @@ class PostController extends Controller
      */
     public function index()
     {
+        $categories = Category::all();
         $posts = Post::all();
-
-        return view('admin.posts.index', compact('posts'));
+        return view('admin.posts.index', compact('posts', 'categories'));
     }
 
     /**
@@ -29,7 +30,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('admin.posts.create');
+        $categories = Category::all();
+        return view('admin.posts.create', compact('categories'));
     }
 
     /**
@@ -44,16 +46,17 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|unique:posts|max:50',
             'content' => 'required',
+            'category_id' => 'exists:categories,id|nullable',
 
         ]);
 
         $data = $request->all();
 
-        $new_post = new Post();
         //gen slug
         $data['slug'] = Str::slug($data['title'], '-');
 
         //create and save
+        $new_post = new Post();
 
         $new_post->fill($data);
 
@@ -110,11 +113,11 @@ class PostController extends Controller
             'title' => [
                 'required',
                 Rule::unique('posts')->ignore($id),
-                'max=255',
 
             ],
 
             'content' => 'required',
+            'category_id' => 'nullable|exists:categories,id',
         ], [
             'required' => 'The :attribute is required!',
             'unique' => 'The :atttribute is already in use in another post',

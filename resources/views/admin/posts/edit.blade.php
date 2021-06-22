@@ -26,6 +26,8 @@
             <div class="feedback">{{$message}}</div>
             @enderror
         </div>
+        
+        
         <button class="btn btn-primary" type="submit">Update post</button>
     </form>
     </div>
