@@ -13,9 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
+//test API
+
 Route::get('/test', function () {
+
     return response()->json([
         'names' => ['Paolo', 'Luca', 'Michela', 'Chiara'],
         'lorem' => 'ipsum',
     ]);
+});
+
+//Get blog posts
+
+Route::namespace ('Api')->group(function () {
+
+    Route::get('posts', 'PostController@index');
 });
