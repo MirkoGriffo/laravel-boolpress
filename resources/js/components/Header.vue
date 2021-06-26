@@ -4,8 +4,10 @@
 
     <nav>
       <ul>
-        <li><a href="">Blog</a></li>
-        <li><a href="">About</a></li>
+        <router-link :to="{name: 'home'}">Home</router-link></li>
+        <router-link :to="{name: 'about'}">About</router-link></li>
+        <router-link :to="{name: 'blog'}">Blog</router-link></li>
+       
       </ul>
     </nav>
   </header>
@@ -18,4 +20,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.active {
+  color: red;
+}
+
+header {
+  background: lightblue;
+}
 </style>

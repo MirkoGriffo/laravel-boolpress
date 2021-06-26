@@ -26,6 +26,7 @@
             <div class="feedback">{{$message}}</div>
             @enderror
         </div>
+       
          {{-- Tags --}}
          <h4>Tags</h4>
          <div class="mb-3">
